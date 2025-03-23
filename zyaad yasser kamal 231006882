@@ -1,0 +1,145 @@
+# Data Structures using C++
+## Fork this repositry and update your readme file to including your name, id and year.
+#include <iostream>
+
+typedef int ElementType;
+
+class Node {
+public:
+    ElementType data;
+    Node* next;
+    Node* prev;
+};
+
+typedef Node* Position;
+
+class SinglyList {
+private:
+    Position head;
+public:
+    SinglyList() : head(nullptr) {}
+
+    void InsertSorted(ElementType x) {
+        Position newNode = new Node;
+        newNode->data = x;
+        newNode->next = nullptr;
+
+        if (!head || head->data >= x) {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+
+        Position current = head;
+        while (current->next && current->next->data < x) {
+            current = current->next;
+        }
+
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+
+    void PrintList() {
+        Position current = head;
+        while (current) {
+            std::cout << current->data << " -> ";
+            current = current->next;
+        }
+        std::cout << "NULL" << std::endl;
+    }
+
+    void MakeNull() {
+        Position current = head;
+        while (current) {
+            Position temp = current;
+            current = current->next;
+            delete temp;
+        }
+        head = nullptr;
+    }
+
+    ~SinglyList() {
+        MakeNull();
+    }
+};
+
+class DoublyList {
+private:
+    Position head;
+    Position tail;
+    int counter;
+public:
+    DoublyList() : head(nullptr), tail(nullptr), counter(0) {}
+
+    void InsertSorted(ElementType x) {
+        Position newNode = new Node;
+        newNode->data = x;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+
+        if (!head) {
+            head = tail = newNode;
+        } else if (x <= head->data) {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        } else if (x >= tail->data) {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        } else {
+            Position current = head;
+            while (current && current->data < x) {
+                current = current->next;
+            }
+            newNode->next = current;
+            newNode->prev = current->prev;
+            current->prev->next = newNode;
+            current->prev = newNode;
+        }
+        counter++;
+    }
+
+    void PrintList() {
+        Position current = head;
+        while (current) {
+            std::cout << current->data << " <-> ";
+            current = current->next;
+        }
+        std::cout << "NULL" << std::endl;
+    }
+
+    void MakeNull() {
+        Position current = head;
+        while (current) {
+            Position temp = current;
+            current = current->next;
+            delete temp;
+        }
+        head = tail = nullptr;
+        counter = 0;
+    }
+
+    ~DoublyList() {
+        MakeNull();
+    }
+};
+
+int main() {
+    SinglyList sList;
+    DoublyList dList;
+
+    int values[] = {10, 5, 20, 15};
+    for (int x : values) {
+        sList.InsertSorted(x);
+        dList.InsertSorted(x);
+    }
+
+    std::cout << "Singly Linked List: ";
+    sList.PrintList();
+
+    std::cout << "Doubly Linked List: ";
+    dList.PrintList();
+
+    return 0;
+}
